@@ -11,7 +11,7 @@ document.querySelector('.check').addEventListener('click', checkNumber);
 document.querySelector('.again').addEventListener('click', againClicked);
 // change button pressed
 document.querySelector('.range').addEventListener('click', changeValue);
-
+console.log(secretNum);
 function checkNumber() {
   const guess = Number(document.querySelector('.guess').value);
   // When there is no input
@@ -40,6 +40,8 @@ function checkNumber() {
 }
 
 function againClicked() {
+  secretNum = generateRandomNumber(minNumber, maxNumber);
+  console.log(secretNum);
   score = 20;
   displayMessage('Start guessing...');
   displayScore(score);
