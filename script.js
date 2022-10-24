@@ -1,84 +1,78 @@
 'use strict';
-
-const generateRandomNo = function () {
-  return Math.trunc(Math.random() * 20) + 1;
-};
-
-let secretNumber = generateRandomNo();
+let minNumber = 1;
+let maxNumber = 20;
+let secretNum = generateRandomNumber(minNumber, maxNumber);
 let score = 20;
-let highscore = 0;
+let highScore = 0;
 
-const displayMessage = function (message) {
-  document.querySelector('.message').textContent = message;
-};
+//check button pressed
+document.querySelector('.check').addEventListener('click', checkNumber);
+// again button pressed
+document.querySelector('.again').addEventListener('click', againClicked);
+// change button pressed
+document.querySelector('.range').addEventListener('click', changeValue);
 
-const changeBackground = function (color) {
-  document.querySelector('body').style.backgroundColor = color;
-};
-
-const changeNumberWidth = function (width) {
-  document.querySelector('.number').style.width = width;
-};
-
-const changeNumberContent = function (content) {
-  document.querySelector('.number').textContent = content;
-};
-
-const changeScoreContent = function (score) {
-  document.querySelector('.score').textContent = score;
-};
-
-document.querySelector('.check').addEventListener('click', function () {
+function checkNumber() {
   const guess = Number(document.querySelector('.guess').value);
-  console.log(guess, typeof guess);
-
   // When there is no input
-  if (!guess) {
-    displayMessage('No number!⛔');
-  }
-  // Number Out of bounbds
-  else if (guess < 1 || guess > 20) {
-    displayMessage('Out of bounds!!! 👀 Please choose number between 1 and 20');
-
-    // When player wins
-  } else if (guess === secretNumber) {
-    displayMessage('🎉Correct Number!');
-
-    changeBackground('#60b347');
-
-    changeNumberWidth('30rem');
-
-    changeNumberContent(secretNumber);
-
-    if (score > highscore) highscore = score;
-    document.querySelector('.highscore').textContent = highscore;
-
-    // When guess is wrong
-  } else if (guess !== secretNumber) {
-    if (score > 1) {
-      displayMessage(guess > secretNumber ? '📈Too high' : '📉Too low');
+  if (guess > maxNumber || guess < minNumber) {
+    displayMessage('Number out of range of ' + minNumber + ' ' + maxNumber);
+    // When the num is wrong
+  } else if (guess !== secretNum) {
+    if (score > minNumber) {
+      displayMessage(guess > secretNum ? '📈Too high!' : '📉Too low!');
       score--;
-      changeScoreContent(score);
+      displayScore(score);
     } else {
-      displayMessage('💥You lost the game');
-      changeScoreContent(0);
+      displayMessage('❌You lost the game!');
+      displayScore(0);
+    }
+  } else if (guess === secretNum) {
+    displayMessage('🎉Correct number🎉');
+    document.querySelector('.number').textContent = secretNum;
+    document.querySelector('.number').style.width = '30rem';
+    document.querySelector('body').style.backgroundColor = '#60b347';
+    if (score > highScore) {
+      highScore = score;
+      document.querySelector('.highscore').textContent = highScore;
     }
   }
-});
+}
 
-document.querySelector('.again').addEventListener('click', function () {
+function againClicked() {
   score = 20;
-  secretNumber = generateRandomNo();
-
   displayMessage('Start guessing...');
-
-  changeScoreContent(score);
-
-  changeNumberContent('?');
-
+  displayScore(score);
+  document.querySelector('.number').textContent = '?';
   document.querySelector('.guess').value = '';
+  document.querySelector('body').style.backgroundColor = '#222';
+  document.querySelector('.number').style.width = '15rem';
+  document.querySelector('h2').textContent =
+    'From ' + minNumber + ' to ' + maxNumber;
+}
 
-  changeNumberWidth('15rem');
+function changeValue() {
+  minNumber = document.querySelector('.min').value;
+  maxNumber = document.querySelector('.max').value;
+  if (minNumber > maxNumber || maxNumber < minNumber) {
+    alert('Minimum number needs to be smaller then maximum');
+    minNumber = 1;
+    maxNumber = 20;
+  } else {
+    secretNum = generateRandomNumber(minNumber, maxNumber);
+    againClicked();
+  }
+}
 
-  changeBackground('#222');
-});
+function displayMessage(message) {
+  document.querySelector('.message').textContent = message;
+}
+function displayScore(scoreMessage) {
+  document.querySelector('.score').textContent = scoreMessage;
+}
+
+function generateRandomNumber(minNumber, maxNumber) {
+  minNumber = Math.ceil(minNumber);
+  maxNumber = Math.floor(maxNumber);
+  return Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber);
+}
